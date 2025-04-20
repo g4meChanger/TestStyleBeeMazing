@@ -31,7 +31,7 @@
       background-color: var(--accent-color);
       border: 1px solid var(--border-dark);
       perspective: 1000px;
-      position: relative; /* For positioning the indicator */
+      position: relative;
     }
     .reward-card-inner {
       position: relative;
@@ -74,7 +74,7 @@
       justify-content: center;
       font-size: 14px;
       font-weight: bold;
-      display: none; /* Hidden by default */
+      display: none;
     }
     @media (max-width: 640px) {
       .reward-card-inner { height: 160px; }
@@ -147,7 +147,8 @@
     <div id="style-2">
       <h2 class="text-2xl font-bold text-center mb-6">Rewards - Card Flip Layout</h2>
       <div class="flex justify-center mb-4">
-        <button onclick="showTab('history')" class="tab-button px-4 py-2 bg-[var(--primary-color)] text-[var(--secondary-color)] rounded-lg">History</button>
+        <button onclick="showTab('rewards')" class="tab-button px-4 py-2 bg-[var(--primary-color)] text-[var(--secondary-color)] rounded-l-lg">Rewards</button>
+        <button onclick="showTab('history')" class="tab-button px-4 py-2 bg-[var(--secondary-color)] text-[var(--text-color)] rounded-r-lg">History</button>
       </div>
       <div id="rewards" class="tab-content">
         <div class="grid grid-cols-2 gap-4">
@@ -227,7 +228,9 @@
             </div>
           </div>
           <div class="reward-card" data-reward="Reward 6">
-            <div class="reward-card-inner">
+            <div class="reward
+
+-card-inner">
               <div class="reward-card-front text-center">
                 <span class="purchase-indicator" data-count="0"></span>
                 <h3 class="text-lg font-semibold">Reward 6</h3>
