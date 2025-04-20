@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeMazing Rewards - Style 2</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-color: #FFC107;
+      --secondary-color: #212121;
+      --accent-color: #2C2F3A;
+      --light-bg: #1E1F26;
+      --text-color: #FFFFFF;
+      --danger-color: #D32F2F;
+      --modal-bg: rgba(33, 33, 33, 0.7);
+      --header-height: 58px;
+      --footer-height: 70px;
+      --add-btn-height: 80px;
+      --border-dark: #444754;
+      --light-text: #FFFFFF;
+    }
+    body { 
+      font-family: 'Arial', sans-serif; 
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      padding-bottom: var(--footer-height);
+    }
+    .reward-card { 
+      transition: all 0.3s ease; 
+      background-color: var(--accent-color);
+      border: 1px solid var(--border-dark);
+      perspective: 1000px;
+      position: relative; /* For positioning the indicator */
+    }
+    .reward-card-inner {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .reward-card.flipped .reward-card-inner {
+      transform: rotateY(180deg);
+    }
+    .reward-card-front, .reward-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background-color: var(--accent-color);
+      cursor: pointer;
+    }
+    .reward-card-back {
+      transform: rotateY(180deg);
+    }
+    .purchase-indicator {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      display: none; /* Hidden by default */
+    }
+    @media (max-width: 640px) {
+      .reward-card-inner { height: 160px; }
+      .reward-card-front, .reward-card-back { padding: 0.75rem; }
+      .reward-card-front h3, .reward-card-back h3 { font-size: 1rem; }
+      .reward-card-front p, .reward-card-back p { font-size: 0.875rem; }
+      .purchase-indicator {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        top: 6px;
+        left: 6px;
+      }
+    }
+    .btn-primary { 
+      background-color: var(--primary-color); 
+      color: var(--secondary-color);
+    }
+    .btn-primary:hover { 
+      background-color: #E0A800;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: var(--secondary-color);
+      padding: 10px 0;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      height: var(--footer-height);
+    }
+    .footer a {
+      text-decoration: none;
+      color: var(--light-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .footer a:hover {
+      transform: scale(1.1);
+    }
+    .footer-icon span {
+      font-size: 12px;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+    .footer-icon .icon-placeholder {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-text);
+      filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .footer a.active .icon-placeholder {
+      filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .footer a.active span {
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="container mx-auto p-4">
+    <div id="style-2">
+      <h2 class="text-2xl font-bold text-center mb-6">Rewards - Card Flip Layout</h2>
+      <div class="flex justify-center mb-4">
+        <button onclick="showTab('history')" class="tab-button px-4 py-2 bg-[var(--primary-color)] text-[var(--secondary-color)] rounded-lg">History</button>
+      </div>
+      <div id="rewards" class="tab-content">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="reward-card" data-reward="Reward 1">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 1</h3>
+                <p class="text-[var(--text-color)]">100 Points</p>
+                <button onclick="buyReward('Reward 1', 100)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 1</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 1')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 2">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 2</h3>
+                <p class="text-[var(--text-color)]">50 Points</p>
+                <button onclick="buyReward('Reward 2', 50)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 2</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 2')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 3">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 3</h3>
+                <p class="text-[var(--text-color)]">75 Points</p>
+                <button onclick="buyReward('Reward 3', 75)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 3</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 3')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 4">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 4</h3>
+                <p class="text-[var(--text-color)]">120 Points</p>
+                <button onclick="buyReward('Reward 4', 120)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 4</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 4')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 5">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 5</h3>
+                <p class="text-[var(--text-color)]">90 Points</p>
+                <button onclick="buyReward('Reward 5', 90)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 5</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 5')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 6">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 6</h3>
+                <p class="text-[var(--text-color)]">60 Points</p>
+                <button onclick="buyReward('Reward 6', 60)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 6</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 6')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+          <div class="reward-card" data-reward="Reward 7">
+            <div class="reward-card-inner">
+              <div class="reward-card-front text-center">
+                <span class="purchase-indicator" data-count="0"></span>
+                <h3 class="text-lg font-semibold">Reward 7</h3>
+                <p class="text-[var(--text-color)]">150 Points</p>
+                <button onclick="buyReward('Reward 7', 150)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+              </div>
+              <div class="reward-card-back text-center">
+                <h3 class="text-lg font-semibold">Reward 7</h3>
+                <div class="receive-options flex flex-wrap justify-center gap-2 my-2"></div>
+                <button onclick="confirmReceived('Reward 7')" class="px-3 py-1 btn-primary rounded">Received</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="history" class="tab-content hidden">
+        <div class="grid grid-cols-2 gap-4" id="history-grid">
+          <!-- History entries will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer" id="footer">
+    <a href="index.html" class="footer-icon" aria-label="Home">
+      <div class="icon-placeholder">
+        🏠︎
+    </div>
+      <span>Home</span>
+    </a>
+    <a href="#" class="footer-icon" aria-label="Profile">
+      <div class="icon-placeholder">
+        ☺
+       </div>
+      <span>Profile</span>
+    </a>
+    <a href="#" class="footer-icon" aria-label="Market">
+      <div class="icon-placeholder">★ </div>
+      <span>Market</span>
+    </a>
+  </div>
+
+  <script>
+    console.log('JavaScript loaded successfully');
+
+    const purchases = {
+      "Reward 1": 0, "Reward 2": 0, "Reward 3": 0, "Reward 4": 0,
+      "Reward 5": 0, "Reward 6": 0, "Reward 7": 0
+    };
+    const rewardPoints = {
+      "Reward 1": 100, "Reward 2": 50, "Reward 3": 75, "Reward 4": 120,
+      "Reward 5": 90, "Reward 6": 60, "Reward 7": 150
+    };
+    const history = [];
+
+    document.querySelectorAll('.reward-card-front, .reward-card-back').forEach(side => {
+      side.addEventListener('click', (event) => {
+        if (event.target.tagName === 'BUTTON' || event.target.tagName === 'INPUT') {
+          return;
+        }
+        const card = side.closest('.reward-card');
+        const rewardName = card.dataset.reward;
+        card.classList.toggle('flipped');
+        if (card.classList.contains('flipped')) {
+          updateReceiveOptions(rewardName);
+          console.log(`Flipped to back for ${rewardName}, count: ${purchases[rewardName]}`);
+        } else {
+          console.log(`Flipped to front for ${rewardName}, count: ${purchases[rewardName]}`);
+        }
+      });
+    });
+
+    function buyReward(rewardName, points) {
+      purchases[rewardName]++;
+      console.log(`Bought ${rewardName}, new count: ${purchases[rewardName]}`);
+      updatePurchaseIndicator(rewardName);
+    }
+
+    function updatePurchaseIndicator(rewardName) {
+      const card = document.querySelector(`.reward-card[data-reward="${rewardName}"]`);
+      const indicator = card.querySelector('.purchase-indicator');
+      const count = purchases[rewardName];
+      indicator.textContent = count;
+      indicator.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    function updateReceiveOptions(rewardName) {
+      const card = document.querySelector(`.reward-card[data-reward="${rewardName}"]`);
+      const optionsContainer = card.querySelector('.receive-options');
+      const count = purchases[rewardName];
+      optionsContainer.innerHTML = '';
+      if (count === 0) {
+        optionsContainer.innerHTML = '<p class="text-[var(--text-color)]">No items to receive</p>';
+        return;
+      }
+      for (let i = 1; i <= count; i++) {
+        const label = document.createElement('label');
+        label.className = 'inline-flex items-center mr-4';
+        label.innerHTML = `
+          <input type="radio" name="receive-count-${rewardName}" value="${i}" class="mr-1" ${i === 1 ? 'checked' : ''}>
+          <span class="text-[var(--text-color)]">${i}</span>
+        `;
+        optionsContainer.appendChild(label);
+      }
+    }
+
+    function confirmReceived(rewardName) {
+      const card = document.querySelector(`.reward-card[data-reward="${rewardName}"]`);
+      const selected = card.querySelector(`input[name="receive-count-${rewardName}"]:checked`);
+      if (!selected) {
+        console.log('No count selected or no items to receive');
+        return;
+      }
+      const count = parseInt(selected.value);
+      console.log(`Before update: ${rewardName} count = ${purchases[rewardName]}, subtracting ${count}`);
+      purchases[rewardName] = Math.max(0, purchases[rewardName] - count);
+      console.log(`After update: ${rewardName} count = ${purchases[rewardName]}`);
+      const now = new Date();
+      const dateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      history.push({ name: rewardName, count, dateTime });
+      console.log(`Added to history: ${rewardName}, Picked Amount: ${count}, DateTime: ${dateTime}`);
+      updateHistoryTab();
+      updatePurchaseIndicator(rewardName);
+      card.classList.remove('flipped');
+    }
+
+    function updateHistoryTab() {
+      const historyGrid = document.getElementById('history-grid');
+      historyGrid.innerHTML = '';
+      history.forEach((entry, index) => {
+        const card = document.createElement('div');
+        card.className = 'reward-card p-4 rounded-lg shadow-md text-center';
+        card.dataset.historyId = index;
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold">${entry.name}</h3>
+          <p class="text-[var(--text-color)]">Picked Amount: ${entry.count}</p>
+          <p class="text-[var(--text-color)] font-bold">${entry.dateTime}</p>
+        `;
+        historyGrid.appendChild(card);
+      });
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('bg-[var(--primary-color)]');
+        button.classList.add('bg-[var(--secondary-color)]');
+        button.classList.remove('text-[var(--secondary-color)]');
+        button.classList.add('text-[var(--text-color)]');
+      });
+      const activeButton = document.querySelector(`button[onclick="showTab('${tabId}')"]`);
+      if (activeButton) {
+        activeButton.classList.remove('bg-[var(--secondary-color)]');
+        activeButton.classList.add('bg-[var(--primary-color)]');
+        activeButton.classList.remove('text-[var(--text-color)]');
+        activeButton.classList.add('text-[var(--secondary-color)]');
+      }
+    }
+
+    window.onload = () => showTab('rewards');
+  </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeMazing Rewards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-color: #FFC107;
+      --secondary-color: #212121;
+      --accent-color: #2C2F3A;
+      --light-bg: #1E1F26;
+      --text-color: #FFFFFF;
+      --danger-color: #D32F2F;
+      --modal-bg: rgba(33, 33, 33, 0.7);
+      --header-height: 58px;
+      --footer-height: 70px;
+      --add-btn-height: 80px;
+      --border-dark: #444754;
+      --light-text: #FFFFFF;
+    }
+    body { 
+      font-family: 'Arial', sans-serif; 
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      padding-bottom: var(--footer-height);
+    }
+    .reward-card { 
+      transition: all 0.3s ease; 
+      background-color: var(--accent-color);
+      border: 1px solid var(--border-dark);
+    }
+    .reward-card.bought { opacity: 0.7; }
+    @media (max-width: 640px) {
+      .reward-card { padding: 0.75rem; }
+      .reward-card h3 { font-size: 1rem; }
+      .reward-card p { font-size: 0.875rem; }
+    }
+    .modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: var(--modal-bg); 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 1000; 
+    }
+    .modal-content { 
+      background: var(--accent-color); 
+      padding: 1.5rem; 
+      border-radius: 0.5rem; 
+      max-width: 90%; 
+      width: 400px; 
+      text-align: center; 
+      color: var(--text-color);
+      border: 1px solid var(--border-dark);
+    }
+    .btn-primary { 
+      background-color: var(--primary-color); 
+      color: var(--secondary-color);
+    }
+    .btn-primary:hover { 
+      background-color: #E0A800;
+    }
+    .btn-danger { 
+      background-color: var(--danger-color); 
+      color: var(--text-color);
+    }
+    .btn-danger:hover { 
+      background-color: #B71C1C;
+    }
+    .tab-button.bg-\[var\(--primary-color\)\] {
+      color: var(--secondary-color);
+    }
+    /* Updated Footer styles */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: var(--secondary-color);
+      padding: 10px 0;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      height: var(--footer-height);
+    }
+    .footer a {
+      text-decoration: none;
+      color: var(--light-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .footer a:hover {
+      transform: scale(1.1);
+    }
+    .footer-icon span {
+      font-size: 12px;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+    /* Placeholder for icons */
+    .footer-icon img {
+      width: 40px;
+      height: 40px;
+      filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .footer a.active img {
+      filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .footer a.active span {
+      color: var(--primary-color);
+    }
+    /* Placeholder icon text styling */
+    .footer-icon .icon-placeholder {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--light-text);
+      filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .footer a.active .icon-placeholder {
+      filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="container mx-auto p-4">
+    <div id="style-4">
+      <h2 class="text-2xl font-bold text-center mb-6">Rewards - Tabbed Layout</h2>
+      <div class="flex justify-center mb-4">
+        <button onclick="showTab('available')" class="tab-button px-4 py-2 bg-[var(--primary-color)] text-[var(--text-color)] rounded-l-lg">Available</button>
+        <button onclick="showTab('bought')" class="tab-button px-4 py-2 bg-[var(--secondary-color)] text-[var(--text-color)]">Obtained</button>
+        <button onclick="showTab('history')" class="tab-button px-4 py-2 bg-[var(--secondary-color)] text-[var(--text-color)] rounded-r-lg">History</button>
+      </div>
+      <div id="available" class="tab-content">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 1</h3>
+            <p class="text-[var(--text-color)]">100 Points</p>
+            <button onclick="buyReward('Reward 1', 100)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 2</h3>
+            <p class="text-[var(--text-color)]">50 Points</p>
+            <button onclick="buyReward('Reward 2', 50)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 3</h3>
+            <p class="text-[var(--text-color)]">75 Points</p>
+            <button onclick="buyReward('Reward 3', 75)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 4</h3>
+            <p class="text-[var(--text-color)]">120 Points</p>
+            <button onclick="buyReward('Reward 4', 120)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 5</h3>
+            <p class="text-[var(--text-color)]">90 Points</p>
+            <button onclick="buyReward('Reward 5', 90)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 6</h3>
+            <p class="text-[var(--text-color)]">60 Points</p>
+            <button onclick="buyReward('Reward 6', 60)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+          <div class="reward-card p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-lg font-semibold">Reward 7</h3>
+            <p class="text-[var(--text-color)]">150 Points</p>
+            <button onclick="buyReward('Reward 7', 150)" class="mt-2 px-3 py-1 btn-primary rounded">Get It</button>
+          </div>
+        </div>
+      </div>
+      <div id="bought" class="tab-content hidden">
+        <div class="grid grid-cols-2 gap-4" id="bought-grid">
+          <!-- Empty initially -->
+        </div>
+      </div>
+      <div id="history" class="tab-content hidden">
+        <div class="grid grid-cols-2 gap-4" id="history-grid">
+          <!-- Empty initially -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="receive-modal" class="modal">
+    <div class="modal-content">
+      <h3 class="text-lg font-semibold mb-4" id="modal-title"></h3>
+      <div id="receive-options" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+      <button onclick="confirmReceived()" class="px-4 py-2 btn-primary rounded">Received</button>
+      <button onclick="closeModal()" class="ml-2 px-4 py-2 btn-danger rounded">Cancel</button>
+    </div>
+  </div>
+
+  <div class="footer" id="footer">
+    <a href="index.html" class="footer-icon" aria-label="Home">
+      <div class="icon-placeholder">
+        🏠︎
+    </div>
+      <span>Home</span>
+    </a>
+    <a href="#" class="footer-icon" aria-label="Profile">
+      <div class="icon-placeholder">
+        ☺
+       </div>
+      <span>Profile</span>
+    </a>
+    <a href="#" class="footer-icon" aria-label="Market">
+      <div class="icon-placeholder">★ </div>
+      <span>Market</span>
+    </a>
+  </div>
+
+  <script>
+    console.log('JavaScript loaded successfully');
+
+    const purchases = {
+      "Reward 1": 0, "Reward 2": 0, "Reward 3": 0, "Reward 4": 0,
+      "Reward 5": 0, "Reward 6": 0, "Reward 7": 0
+    };
+    const rewardPoints = {
+      "Reward 1": 100, "Reward 2": 50, "Reward 3": 75, "Reward 4": 120,
+      "Reward 5": 90, "Reward 6": 60, "Reward 7": 150
+    };
+    const history = [];
+
+    document.getElementById('bought-grid').addEventListener('click', (event) => {
+      const card = event.target.closest('.reward-card');
+      if (card) {
+        const rewardName = card.dataset.reward;
+        console.log(`Clicked card in Bought tab, reward: ${rewardName}, target: ${event.target.tagName}`);
+        openReceiveModal(rewardName);
+      } else {
+        console.log('Clicked outside reward card in Bought tab');
+      }
+    });
+
+    function buyReward(rewardName, points) {
+      purchases[rewardName]++;
+      console.log(`Bought ${rewardName}, new count: ${purchases[rewardName]}`);
+      updateBoughtTab(rewardName);
+    }
+
+    function updateBoughtTab(rewardName) {
+      const boughtGrid = document.getElementById('bought-grid');
+      let card = document.querySelector(`#bought-grid [data-reward="${rewardName}"]`);
+      if (card) {
+        card.remove();
+        console.log(`Removed existing card for ${rewardName} before update`);
+      }
+      if (purchases[rewardName] > 0) {
+        card = document.createElement('div');
+        card.className = 'reward-card bought p-4 rounded-lg shadow-md text-center';
+        card.dataset.reward = rewardName;
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold">${rewardName}</h3>
+          <p class="text-[var(--text-color)]">${rewardPoints[rewardName]} Points</p>
+          <p class="text-[var(--text-color)] font-bold count">${purchases[rewardName]}</p>
+        `;
+        boughtGrid.appendChild(card);
+        console.log(`Created/updated card for ${rewardName}, count: ${purchases[rewardName]}`);
+      } else {
+        console.log(`Not creating card for ${rewardName}, count is 0`);
+      }
+    }
+
+    function openReceiveModal(rewardName) {
+      console.log(`Opening modal for ${rewardName}, count: ${purchases[rewardName]}`);
+      const modal = document.getElementById('receive-modal');
+      const title = document.getElementById('modal-title');
+      const options = document.getElementById('receive-options');
+      const count = purchases[rewardName];
+      if (!modal || !title || !options) {
+        console.error('Modal elements not found:', { modal, title, options });
+        return;
+      }
+      title.textContent = `Select number of ${rewardName} to receive`;
+      options.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        const label = document.createElement('label');
+        label.className = 'inline-flex items-center mr-4';
+        label.innerHTML = `
+          <input type="radio" name="receive-count" value="${i}" class="mr-1" ${i === 1 ? 'checked' : ''}>
+          <span class="text-[var(--text-color)]">${i}</span>
+        `;
+        options.appendChild(label);
+      }
+      modal.style.display = 'flex';
+      console.log(`Modal displayed for ${rewardName}`);
+    }
+
+    function confirmReceived() {
+      const selected = document.querySelector('input[name="receive-count"]:checked');
+      if (!selected) {
+        console.log('No count selected');
+        return;
+      }
+      const count = parseInt(selected.value);
+      const modalTitle = document.getElementById('modal-title').textContent;
+      const rewardName = modalTitle.split(' ').slice(3, 5).join(' ');
+      console.log(`Modal title: ${modalTitle}, extracted reward: ${rewardName}`);
+      console.log(`Before update: ${rewardName} count = ${purchases[rewardName]}, subtracting ${count}`);
+      purchases[rewardName] = Math.max(0, purchases[rewardName] - count);
+      console.log(`After update: ${rewardName} count = ${purchases[rewardName]}`);
+      updateBoughtTab(rewardName);
+      const now = new Date();
+      const dateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      history.push({ name: rewardName, count, dateTime });
+      console.log(`Added to history: ${rewardName}, Picked Amount: ${count}, DateTime: ${dateTime}`);
+      updateHistoryTab();
+      closeModal();
+    }
+
+    function updateHistoryTab() {
+      const historyGrid = document.getElementById('history-grid');
+      historyGrid.innerHTML = '';
+      history.forEach((entry, index) => {
+        const card = document.createElement('div');
+        card.className = 'reward-card p-4 rounded-lg shadow-md text-center';
+        card.dataset.historyId = index;
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold">${entry.name}</h3>
+          <p class="text-[var(--text-color)]">Picked Amount: ${entry.count}</p>
+          <p class="text-[var(--text-color)] font-bold">${entry.dateTime}</p>
+        `;
+        historyGrid.appendChild(card);
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('receive-modal').style.display = 'none';
+      console.log('Modal closed');
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('bg-[var(--primary-color)]');
+        button.classList.add('bg-[var(--secondary-color)]');
+      });
+      document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.remove('bg-[var(--secondary-color)]');
+      document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('bg-[var(--primary-color)]');
+    }
+
+    window.onload = () => showTab('available');
+  </script>
+</body>
+</html>
